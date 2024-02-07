@@ -1,8 +1,11 @@
 package org;
 
-
 import java.net.*;
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -10,6 +13,7 @@ import java.util.Objects;
  * Clase principal que contiene el metodo main que inicia el servidor http
  */
 public class HttpServer {
+
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket = null;
         try {
@@ -45,7 +49,6 @@ public class HttpServer {
                     break;
                 }
             }
-
             if(!Objects.equals(uriString, "")){
                 outputLine = getHello(uriString);
             }else {
@@ -60,6 +63,7 @@ public class HttpServer {
     }
 
     public static String getHello(String uri) throws IOException {
+
         String response = "HTTP/1.1 200 OK\r\n"
                 + "Content-Type: application/json\r\n"
                 + "\r\n" +
@@ -121,4 +125,27 @@ public class HttpServer {
         return tabla;
 
     }
+
+    public static String getHtttpResponse(URI uri) throws IOException {
+        Path file = Paths.get("target/classes/public" + uri.getPath());
+        String outputLine = "HTTP/1.1 200 OK\r\n"
+                + "Content-Type:text/html\r\n"
+                + "\r\n";
+
+        Charset charset = Charset.forName("UTF-8");
+        BufferedReader reader = Files.newBufferedReader(file, charset);
+        String line = null;
+
+        while ((line = reader.readLine())!= null){
+            System.out.println(line);
+            outputLine = outputLine + line;
+        }
+
+
+
+        return outputLine;
+
+    }
+
+
 }
